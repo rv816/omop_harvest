@@ -2,15 +2,6 @@ import os
 
 # Import global settings to make it easier to extend settings.
 from django.conf.global_settings import *
-from django.core.exceptions import ImproperlyConfigured
-
-def get_env_variable(var_name):
-    """ Get the environment variable or return an exception"""
-    try:
-        return os.environ[var_name]
-    except KeyError:
-        error_msg = "Set the %s environment variable" % var_name
-        raise ImproperlyConfigured(error_msg)
 
 # Import the project module to calculate directories relative to the module
 # location.
@@ -22,13 +13,13 @@ PROJECT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'
 # Read more about projects vs. apps here:
 # https://docs.djangoproject.com/en/1.3/intro/tutorial01/#creating-models
 INSTALLED_APPS = (
-    'omop_harvest',
-
     'south',
     'serrano',
     'avocado',
     'modeltree',
     'haystack',
+
+    'omop_harvest',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,10 +29,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.staticfiles',
-
-    'chopauth',
-    'registration'
+    'django.contrib.staticfiles'
 )
 
 
@@ -72,14 +60,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(PROJECT_PATH, 'harvest.db')
-    },
-    'omop': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_PATH, 'omop.db')
     }
 }
-
-DATABASE_ROUTERS = ('omop_harvest.routers.OmopRouter',)
 
 #
 # LOCALITY
@@ -170,35 +152,9 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 #
 
 # FORCE_SCRIPT_NAME overrides the interpreted 'SCRIPT_NAME' provided by the
-# web server. since the URLs below are used for various purposes outside of
-# the WSGI application (static and media files), these need to be updated to
-# reflect this discrepancy.
+# web server.
 FORCE_SCRIPT_NAME = ''
-LOGIN_URL = FORCE_SCRIPT_NAME + '/login/'
-LOGIN_REDIRECT_URL = FORCE_SCRIPT_NAME + '/query/'
-LOGOUT_URL = '/logout/'
 ROOT_URLCONF = 'omop_harvest.conf.urls'
-
-# For non-publicly accessible applications, the siteauth app can be used to
-# restrict access site-wide.
-# SITEAUTH_ACCESS_ORDER = 'allow/deny'
-#
-SITEAUTH_ALLOW_URLS = (
-    r'^log(in|out)/',
-    r'^password/reset/',
-    r'^(register|verify)/',
-)
-
-SITEAUTH_DENY_URLS = (
-    r'^workspace/',
-    r'^workspace/discover/',
-    r'^query/',
-    r'^results/+',
-    r'^api/+',
-    r'^details/\d+/',
-    r'^moderate/+',
-    r'^verify/+',
-)
 
 #
 # MIDDLEWARE
