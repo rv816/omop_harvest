@@ -31,7 +31,7 @@ class ViewManager(models.Manager):
         db.commit_transaction()
 
 class CareSite(models.Model):
-    care_site_id = models.IntegerField(primary_key=True)
+    care_site_id = models.AutoField(primary_key=True)
     location = models.ForeignKey('Location', null=True, blank=True)
     organization = models.ForeignKey('Organization', null=True, blank=True)
     place_of_service_concept_id = models.IntegerField(null=True, blank=True)
@@ -41,7 +41,7 @@ class CareSite(models.Model):
         db_table = 'care_site'
 
 class Cohort(models.Model):
-    cohort_id = models.IntegerField(primary_key=True)
+    cohort_id = models.AutoField(primary_key=True)
     cohort_concept_id = models.IntegerField()
     cohort_start_date = models.DateTimeField()
     cohort_end_date = models.DateTimeField(null=True, blank=True)
@@ -106,6 +106,24 @@ class ConditionType(ConceptBase):
     class Meta(ConceptBase.Meta):
         db_table = 'condition_type'
 
+class DrugConcept(ConceptBase):
+    vocabulary_id = models.IntegerField()
+    JOIN_TABLE_FIELD = 'drug_exposure.drug_concept_id'
+    class Meta(ConceptBase.Meta):
+        db_table = 'drug_concept'
+
+class DrugType(ConceptBase):
+    vocabulary_id = models.IntegerField()
+    JOIN_TABLE_FIELD = 'drug_exposure.drug_type_concept_id'
+    class Meta(ConceptBase.Meta):
+        db_table = 'drug_type'
+
+class DrugCondition(ConceptBase):
+    vocabulary_id = models.IntegerField()
+    JOIN_TABLE_FIELD = 'drug_exposure.relevant_condition_concept_id'
+    class Meta(ConceptBase.Meta):
+        db_table = 'drug_condition'
+
 class ProcedureConcept(ConceptBase):
     vocabulary_id = models.IntegerField()
     JOIN_TABLE_FIELD = 'procedure_occurrence.procedure_concept_id'
@@ -129,6 +147,18 @@ class ObservationType(ConceptBase):
     JOIN_TABLE_FIELD = 'observation.observation_type_concept_id'
     class Meta(ConceptBase.Meta):
         db_table = 'observation_type'
+
+class ObservationCondition(ConceptBase):
+    vocabulary_id = models.IntegerField()
+    JOIN_TABLE_FIELD = 'observation.relevant_condition_concept_id'
+    class Meta(ConceptBase.Meta):
+        db_table = 'observation_condition'
+
+class ObservationValue(ConceptBase):
+    vocabulary_id = models.IntegerField()
+    JOIN_TABLE_FIELD = 'observation.value_as_concept_id'
+    class Meta(ConceptBase.Meta):
+        db_table = 'observation_value'
 
 class ConceptAncestor(models.Model):
     ancestor_concept = models.ForeignKey(Concept, related_name='conceptancestor_descendant_set')
@@ -165,7 +195,7 @@ class ConceptSynonym(models.Model):
         db_table = 'concept_synonym'
 
 class ConditionEra(models.Model):
-    condition_era_id = models.IntegerField(primary_key=True)
+    condition_era_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
     condition_concept_id = models.IntegerField()
     condition_era_start_date = models.DateTimeField()
@@ -176,7 +206,7 @@ class ConditionEra(models.Model):
         db_table = 'condition_era'
 
 class ConditionOccurrence(models.Model):
-    condition_occurrence_id = models.IntegerField(primary_key=True)
+    condition_occurrence_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
     condition_concept_id = models.ForeignKey(ConditionConcept, db_column='condition_concept_id')
     condition_start_date = models.DateTimeField()
@@ -209,7 +239,7 @@ class DrugApproval(models.Model):
         db_table = 'drug_approval'
 
 class DrugCost(models.Model):
-    drug_cost_id = models.IntegerField(primary_key=True)
+    drug_cost_id = models.AutoField(primary_key=True)
     drug_exposure = models.ForeignKey('DrugExposure')
     paid_copay = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
     paid_coinsurance = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
@@ -226,7 +256,7 @@ class DrugCost(models.Model):
         db_table = 'drug_cost'
 
 class DrugEra(models.Model):
-    drug_era_id = models.IntegerField(primary_key=True)
+    drug_era_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
     drug_concept_id = models.IntegerField()
     drug_era_start_date = models.DateTimeField()
@@ -237,12 +267,12 @@ class DrugEra(models.Model):
         db_table = 'drug_era'
 
 class DrugExposure(models.Model):
-    drug_exposure_id = models.IntegerField(primary_key=True)
+    drug_exposure_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
-    drug_concept_id = models.IntegerField()
+    drug_concept_id = models.ForeignKey(DrugConcept, db_column='drug_concept_id')
     drug_exposure_start_date = models.DateTimeField()
     drug_exposure_end_date = models.DateTimeField(null=True, blank=True)
-    drug_type_concept_id = models.IntegerField()
+    drug_type_concept_id = models.ForeignKey(DrugType, db_column='drug_type_concept_id')
     stop_reason = models.CharField(max_length=20, blank=True, null=True)
     refills = models.DecimalField(null=True, max_digits=3, decimal_places=0, blank=True)
     quantity = models.DecimalField(null=True, max_digits=4, decimal_places=0, blank=True)
@@ -250,7 +280,7 @@ class DrugExposure(models.Model):
     sig = models.CharField(max_length=500, blank=True, null=True)
     prescribing_provider = models.ForeignKey('Provider', null=True, blank=True)
     visit_occurrence = models.ForeignKey('VisitOccurrence', null=True, blank=True)
-    relevant_condition_concept_id = models.IntegerField(null=True, blank=True)
+    relevant_condition_concept_id = models.ForeignKey(DrugCondition, db_column='relevant_condition_concept_id', null=True, blank=True)
     drug_source_value = models.CharField(max_length=50, blank=True, null=True)
     class Meta:
         db_table = 'drug_exposure'
@@ -273,7 +303,7 @@ class DrugStrength(models.Model):
         db_table = 'drug_strength'
 
 class Location(models.Model):
-    location_id = models.IntegerField(primary_key=True)
+    location_id = models.AutoField(primary_key=True)
     address_1 = models.CharField(max_length=50, blank=True, null=True)
     address_2 = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
@@ -285,21 +315,21 @@ class Location(models.Model):
         db_table = 'location'
 
 class Observation(models.Model):
-    observation_id = models.IntegerField(primary_key=True)
+    observation_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
     observation_concept_id = models.ForeignKey(ObservationConcept, db_column='observation_concept_id')
     observation_date = models.DateTimeField()
     observation_time = models.DateTimeField(null=True, blank=True)
     value_as_number = models.DecimalField(null=True, max_digits=14, decimal_places=3, blank=True)
     value_as_string = models.CharField(max_length=60, blank=True, null=True)
-    value_as_concept_id = models.IntegerField(null=True, blank=True)
+    value_as_concept_id = models.ForeignKey(ObservationValue, db_column='value_as_concept_id', null=True, blank=True)
     unit_concept_id = models.IntegerField(null=True, blank=True)
     range_low = models.DecimalField(null=True, max_digits=14, decimal_places=3, blank=True)
     range_high = models.DecimalField(null=True, max_digits=14, decimal_places=3, blank=True)
     observation_type_concept_id = models.ForeignKey(ObservationType, db_column='observation_type_concept_id')
     associated_provider = models.ForeignKey('Provider', null=True, blank=True)
     visit_occurrence = models.ForeignKey('VisitOccurrence', null=True, blank=True)
-    relevant_condition_concept_id = models.IntegerField(null=True, blank=True)
+    relevant_condition_concept_id = models.ForeignKey(ObservationCondition, db_column='relevant_condition_concept_id', null=True, blank=True)
     observation_source_value = models.CharField(max_length=50, blank=True, null=True)
     units_source_value = models.CharField(max_length=50, blank=True, null=True)
     class Meta:
@@ -309,7 +339,7 @@ class Observation(models.Model):
         ]
 
 class ObservationPeriod(models.Model):
-    observation_period_id = models.IntegerField(primary_key=True)
+    observation_period_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
     observation_period_start_date = models.DateTimeField()
     observation_period_end_date = models.DateTimeField(null=True, blank=True)
@@ -320,7 +350,7 @@ class ObservationPeriod(models.Model):
         )
 
 class Organization(models.Model):
-    organization_id = models.IntegerField(primary_key=True)
+    organization_id = models.AutoField(primary_key=True)
     place_of_service_concept_id = models.IntegerField(null=True, blank=True)
     location = models.ForeignKey(Location, null=True, blank=True)
     organization_source_value = models.CharField(max_length=50)
@@ -332,7 +362,7 @@ class Organization(models.Model):
         ]
 
 class PayerPlanPeriod(models.Model):
-    payer_plan_period_id = models.IntegerField(primary_key=True)
+    payer_plan_period_id = models.AutoField(primary_key=True)
     person = models.ForeignKey('Person')
     payer_plan_period_start_date = models.DateTimeField()
     payer_plan_period_end_date = models.DateTimeField()
@@ -343,7 +373,7 @@ class PayerPlanPeriod(models.Model):
         db_table = 'payer_plan_period'
 
 class Person(models.Model):
-    person_id = models.IntegerField(primary_key=True)
+    person_id = models.AutoField(primary_key=True)
     gender_concept_id = models.ForeignKey(Gender, db_column='gender_concept_id')
     year_of_birth = models.DecimalField(max_digits=4, decimal_places=0)
     month_of_birth = models.DecimalField(null=True, max_digits=2, decimal_places=0, blank=True)
@@ -361,7 +391,7 @@ class Person(models.Model):
         db_table = 'person'
 
 class ProcedureCost(models.Model):
-    procedure_cost_id = models.IntegerField(primary_key=True)
+    procedure_cost_id = models.AutoField(primary_key=True)
     procedure_occurrence = models.ForeignKey('ProcedureOccurrence')
     paid_copay = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
     paid_coinsurance = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
@@ -379,7 +409,7 @@ class ProcedureCost(models.Model):
         db_table = 'procedure_cost'
 
 class ProcedureOccurrence(models.Model):
-    procedure_occurrence_id = models.IntegerField(primary_key=True)
+    procedure_occurrence_id = models.AutoField(primary_key=True)
     person = models.ForeignKey(Person)
     procedure_concept_id = models.ForeignKey(ProcedureConcept, db_column='procedure_concept_id')
     procedure_date = models.DateTimeField()
@@ -392,7 +422,7 @@ class ProcedureOccurrence(models.Model):
         db_table = 'procedure_occurrence'
 
 class Provider(models.Model):
-    provider_id = models.IntegerField(primary_key=True)
+    provider_id = models.AutoField(primary_key=True)
     npi = models.CharField(max_length=20, blank=True, null=True)
     dea = models.CharField(max_length=20, blank=True, null=True)
     specialty_concept_id = models.IntegerField(null=True, blank=True)
@@ -434,7 +464,7 @@ class SourceToConceptMap(models.Model):
         )
 
 class VisitOccurrence(models.Model):
-    visit_occurrence_id = models.IntegerField(primary_key=True)
+    visit_occurrence_id = models.AutoField(primary_key=True)
     person = models.ForeignKey(Person)
     visit_start_date = models.DateTimeField()
     visit_end_date = models.DateTimeField()
