@@ -16,7 +16,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         quoted_fields = [self.quote_name(fld) for fld in field_list]
         params['fields_str'] = ', '.join(quoted_fields)
         self.execute("INSERT INTO %(table_name)s (%(fields_str)s) SELECT"
-                     "DISTINCT %(fields_str)s FROM %(src_table_name)s JOIN"
+                     " DISTINCT %(fields_str)s FROM %(src_table_name)s JOIN"
                      " %(join_table_name)s ON %(src_table_name)s."
                      "%(src_field_name)s = %(join_table_name)s."
                      "%(join_field_name)s" % params)
