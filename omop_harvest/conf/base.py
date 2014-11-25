@@ -143,6 +143,7 @@ TEMPLATE_DIRS = ()
 # template context.
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
+    'django.core.context_processors.csrf',
     'omop_harvest.context_processors.static',
 )
 
@@ -160,12 +161,13 @@ ROOT_URLCONF = 'omop_harvest.conf.urls'
 # MIDDLEWARE
 #
 MIDDLEWARE_CLASSES = (
+   
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'siteauth.middleware.SiteAuthenticationMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'serrano.middleware.SessionMiddleware',
 )
@@ -286,7 +288,7 @@ CSRF_COOKIE_NAME = 'omop_harvest_csrftoken'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_COOKIE_NAME = 'omop_harvest_sessionid'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_SAVE_EVERY_REQUEST = False
+SESSION_SAVE_EVERY_REQUEST = False 
 
 #
 # OTHER PROJECT SETTINGS
