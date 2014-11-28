@@ -11,7 +11,7 @@
     - Go to http://continuum.io/downloads#all and download the version of anaconda python 2.7.8 for your operating system. 
     - Set up python
     - Add "export PATH='/path/to/anaconda/bin:$PATH" to your .bash_profile. You may need to similarly tell the system about a file called LD_LIBRARY..... 
-    - Once "pip" and "virtualenv" are isntalled, follow the instructions below to install OMOP and Harvest.
+    - Once "pip" and "virtualenv" are installed, follow the instructions below to install OMOP and Harvest.
 
 
 # OMOP + Harvest
