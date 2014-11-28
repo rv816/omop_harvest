@@ -483,3 +483,8 @@ class Vocabulary(models.Model):
     class Meta:
         db_table = 'vocabulary'
 
+refreshlist = [Gender, Race,Ethnicity, ConditionConcept, ConditionType, DrugConcept, DrugType, DrugCondition, ObservationConcept,ObservationType, ObservationCondition, ObservationValue] 
+
+for x in refreshlist:
+    print("Refreshing view " + str(x))
+    x.view.refresh()
