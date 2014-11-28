@@ -44,14 +44,7 @@ These instructions are intended for use with a PostgreSQL database.
 
 ### 4. Load data into your database
 
-This is tricky right now (this process is being fixed at present), so these instructions are designed to minimize the possibility of creating downstream hiccups. 
-
-- Instantiate the omop database using the SQL file that I sent via NIH file sharing.
-    
-- Create a blank database. Call it "vassr". Create ROLE vassr (yes, the database and username are both vassr) and set the temporary password "grdr2015." You can change it once you get everything set up.
-    
-- Make sure your psql session is running in the etl folder (the `\! pwd` and `\cd` commands will help), and then source the file "harvest_deploy_26_11_14_1335.sql" using the `\ir` command to take advantage of the relative path names in the scripts. This will take a _long time_.
-    
+- Contact chopteam@ for further db instructions. 
 
 ### 5. Configure local settings and connect Harvest to your database
 
