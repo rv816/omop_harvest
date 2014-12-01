@@ -8,7 +8,7 @@ code {
 
 #wrap {
     position: relative;
-    min-height: 100%;
+    min-height: 120%;
 }
 
 #footer {
@@ -25,6 +25,7 @@ code {
 
 body, #concept-panel, #context-panel {
     padding-top: 40px;
+    padding-bottom: 100px;
 }
 
 @media (max-width: 979px) {
